@@ -42,6 +42,8 @@ Makefile 会自动找到 `scripts/install_ispc.sh` 装好的 ISPC；也可以 `m
 
 ## Program 1: 用线程并行生成分形（20 分）
 
+> 背景、分步提示和伪代码见 [prog1_mandelbrot_threads/README.md](prog1_mandelbrot_threads/README.md)。
+
 构建并运行 `prog1_mandelbrot_threads/`（`make && ./mandelbrot`）。程序生成 Mandelbrot 集合的图像 `mandelbrot-serial.ppm`，每个像素的亮度与判定该点是否属于集合所需的计算量成正比。用 `--view 2` 得到第二个视图。
 
 你的任务是用 `std::thread` 并行化。起始代码在 `mandelbrotThread.cpp` 的 `workerThreadStart()` 里什么都没做。
@@ -56,6 +58,8 @@ Makefile 会自动找到 `scripts/install_ispc.sh` 装好的 ISPC；也可以 `m
 6. （新增）在 275HX 上，`T=24` 个线程里既有 P 核也有 E 核，在 i5 上则有超线程。结合你的计时数据，讨论这两种“非对等”的执行资源对加速比上限的影响。
 
 ## Program 2: 用 SIMD intrinsics 向量化代码（20 分）
+
+> 背景、分步提示和伪代码见 [prog2_vecintrin/README.md](prog2_vecintrin/README.md)。
 
 看 `prog2_vecintrin/main.cpp` 里的 `clampedExpSerial`：对数组每个元素计算 `values[i]` 的 `exponents[i]` 次幂，并把结果截断到 9.999999。本程序分两部分：
 
@@ -98,6 +102,8 @@ make myexp_avx AVXFLAGS="-mavx2 -mfma -mavx512f"         # 加上 AVX-512，仅 
 4. *加分（1 分）*：用 AVX2 实现 `arraySumAVX2`，先在寄存器里累加，最后再做 8 个 lane 的归约。解释它的结果为什么可能和串行结果略有不同。
 
 ## Program 3: 用 ISPC 并行生成分形（20 分）
+
+> 背景、分步提示和伪代码见 [prog3_mandelbrot_ispc/README.md](prog3_mandelbrot_ispc/README.md)。
 
 和 Program 1 一样计算 Mandelbrot 图像，但这次用 ISPC：它同时利用 SIMD 单元（单核内）和多核（tasks）。你只需要做一个简单的修改（这个错误只影响性能，不影响正确性）。
 
@@ -143,6 +149,8 @@ export void sum2(uniform int N, uniform float* a, uniform float* b, uniform floa
 
 ## Program 4: 迭代法 `sqrt`（15 分）
 
+> 背景、分步提示和伪代码见 [prog4_sqrt/README.md](prog4_sqrt/README.md)。
+
 `prog4_sqrt` 用 ISPC 对 2000 万个 0 到 3 之间的随机数求平方根，使用牛顿法求解方程 `1/x^2 - S = 0`，初始猜测为 1.0。收敛速度取决于初始猜测的精度：输入越接近 1 收敛越快，越接近 0 或 3 越慢（本实现对 (0, 3) 之外的输入不收敛）。见 `handout-images/sqrt_graph.jpg`。
 
 这一题是对 Program 2 和 3 的复习。
@@ -157,6 +165,8 @@ export void sum2(uniform int N, uniform float* a, uniform float* b, uniform floa
 
 ## Program 5: BLAS `saxpy`（10 分）
 
+> 背景、分步提示和伪代码见 [prog5_saxpy/README.md](prog5_saxpy/README.md)。
+
 `saxpy` 计算 `result = scale * X + Y`，其中 X、Y、result 是 N 个元素的向量（N = 2000 万），`scale` 是标量。每读写三个元素只做两次浮点运算（一次乘、一次加）。它是个极易并行的计算，访存规律且每个元素代价固定。
 
 **要做的事：**
@@ -169,6 +179,8 @@ export void sum2(uniform int N, uniform float* a, uniform float* b, uniform floa
 注意：这题的答案不需要想得太复杂。
 
 ## Program 6: 让 `K-Means` 更快（15 分）
+
+> 背景、分步提示和伪代码见 [prog6_kmeans/README.md](prog6_kmeans/README.md)。
 
 `prog6_kmeans` 用 K-Means 算法对一百万个数据点聚类。给定 K 个初始中心，算法迭代更新中心直到满足收敛条件。起始代码已经是正确的实现，但不够快。你的任务是找出需要改进的**位置**以及**怎么**改进。这一题训练的关键技能是**定位性能热点**：先问自己时间花在哪里，在源码中插入计时代码做测量，再针对占大头的部分想办法加速。
 
