@@ -1,0 +1,23 @@
+# build products
+objs/
+*.o
+prog1_mandelbrot_threads/mandelbrot
+prog2_vecintrin/myexp
+prog2_vecintrin/myexp_avx
+prog3_mandelbrot_ispc/mandelbrot_ispc
+prog4_sqrt/sqrt
+prog5_saxpy/saxpy
+prog6_kmeans/kmeans
+prog6_kmeans/gendata
+
+# generated outputs
+*.ppm
+*.log
+*.png
+
+# large generated dataset (recreate with `make data` in prog6_kmeans)
+prog6_kmeans/data.dat
+
+# misc
+*~
+__pycache__/
